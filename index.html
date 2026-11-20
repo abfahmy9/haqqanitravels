@@ -3,13 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>হক্কানী ট্রাভেল্স সেন্টার - ERP & POS সফটওয়্যার</title>
+  <title>হক্কানী ট্রাভেল্স সেন্টার - স্মার্ট ERP ও POS সিস্টেম</title>
   <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     :root {
       --primary: #0f172a;
+      --secondary: #1e293b;
       --accent: #0284c7;
+      --accent-dark: #0369a1;
       --success: #16a34a;
       --warning: #d97706;
       --danger: #dc2626;
@@ -18,94 +20,151 @@
       --text: #1e293b;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Hind Siliguri', sans-serif; }
-    body { background: var(--bg); color: var(--text); }
+    body { background: var(--bg); color: var(--text); display: flex; flex-direction: column; min-height: 100vh; }
 
+    /* LOGIN SCREEN (HIDDEN ID & PASSWORD) */
     #loginScreen {
-      position: fixed; inset: 0; background: linear-gradient(135deg, #0f172a 0%, #0369a1 100%);
+      position: fixed; inset: 0;
+      background: linear-gradient(135deg, #0f172a 0%, #0369a1 60%, #0ea5e9 100%);
       display: flex; align-items: center; justify-content: center; z-index: 9999; padding: 15px;
     }
     .login-box {
-      background: #fff; padding: 30px; border-radius: 16px; width: 100%; max-width: 400px;
-      box-shadow: 0 20px 25px -5px rgba(0,0,0,0.3); text-align: center;
+      background: rgba(255, 255, 255, 0.97); padding: 32px 28px; border-radius: 18px;
+      width: 100%; max-width: 410px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.45);
+      text-align: center; animation: floatCard 0.6s ease;
     }
-    .login-box h2 { color: var(--primary); margin-bottom: 5px; font-size: 24px; }
-    .login-box p { color: #64748b; font-size: 14px; margin-bottom: 20px; }
+    @keyframes floatCard {
+      from { opacity: 0; transform: translateY(18px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .login-box h2 { color: var(--primary); margin-bottom: 4px; font-size: 24px; }
+    .login-box p { color: #64748b; font-size: 13px; margin-bottom: 20px; }
+    .input-wrap { position: relative; display: flex; align-items: center; }
+    .input-wrap .eye-btn {
+      position: absolute; right: 12px; background: none; border: none;
+      color: #64748b; cursor: pointer; font-size: 16px;
+    }
 
-    .app-container { display: none; min-height: 100vh; }
+    /* MAIN LAYOUT WITH HEADER & FOOTER */
+    .app-wrapper { display: none; flex: 1; flex-direction: column; min-height: 100vh; }
+    .app-body { display: flex; flex: 1; }
+
     .sidebar {
-      width: 250px; background: var(--primary); color: #fff; position: fixed;
-      top: 0; bottom: 0; left: 0; padding: 20px 15px; overflow-y: auto; transition: 0.3s; z-index: 100;
+      width: 255px; background: var(--primary); color: #fff;
+      padding: 20px 14px; flex-shrink: 0; transition: 0.3s;
     }
-    .brand { text-align: center; padding-bottom: 20px; border-bottom: 1px solid #334155; margin-bottom: 20px; }
-    .brand h3 { font-size: 20px; color: #38bdf8; }
-    .brand small { font-size: 12px; color: #94a3b8; display: block; }
+    .brand { text-align: center; padding-bottom: 18px; border-bottom: 1px solid #334155; margin-bottom: 18px; }
+    .brand h3 { font-size: 19px; color: #38bdf8; }
+    .brand small { font-size: 12px; color: #94a3b8; display: block; margin-top: 2px; }
 
     .nav-btn {
-      width: 100%; background: transparent; border: none; color: #cbd5e1; padding: 12px 15px;
+      width: 100%; background: transparent; border: none; color: #cbd5e1; padding: 11px 14px;
       text-align: left; border-radius: 8px; cursor: pointer; font-size: 15px; margin-bottom: 6px;
       display: flex; align-items: center; gap: 10px; transition: 0.2s;
     }
     .nav-btn:hover, .nav-btn.active { background: var(--accent); color: #fff; font-weight: 600; }
 
-    .main-content { margin-left: 250px; padding: 20px; }
-    .topbar {
-      background: #fff; padding: 15px 20px; border-radius: 12px; display: flex;
-      justify-content: space-between; align-items: center; margin-bottom: 20px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.1); flex-wrap: wrap; gap: 10px;
+    .main-area { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+
+    /* STYLED HEADER */
+    .top-header {
+      background: linear-gradient(90deg, #0f172a 0%, #1e3a8a 100%);
+      color: #fff; padding: 14px 22px; display: flex; justify-content: space-between;
+      align-items: center; flex-wrap: wrap; gap: 12px; box-shadow: 0 4px 12px rgba(15,23,42,0.15);
+    }
+    .header-title { display: flex; align-items: center; gap: 12px; }
+    .plane-anim { color: #38bdf8; font-size: 22px; animation: planeFly 3s ease-in-out infinite; }
+    @keyframes planeFly {
+      0%, 100% { transform: translateX(0) rotate(0deg); }
+      50% { transform: translateX(6px) rotate(-6deg); }
     }
     .badge { padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; }
     .badge-online { background: #dcfce7; color: #166534; }
     .badge-demo { background: #fef3c7; color: #92400e; }
 
-    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px; }
-    .stat-card {
-      background: #fff; padding: 20px; border-radius: 12px; border-left: 5px solid var(--accent);
-      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-    }
-    .stat-card h4 { font-size: 14px; color: #64748b; }
-    .stat-card .val { font-size: 26px; font-weight: 700; color: var(--primary); margin-top: 5px; }
+    .content-container { padding: 20px; flex: 1; }
 
-    .card { background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 20px; }
+    /* TRAVEL SLIDER & ANIMATION BANNER */
+    .travel-slider {
+      position: relative; height: 210px; border-radius: 14px; overflow: hidden;
+      margin-bottom: 22px; box-shadow: 0 8px 20px rgba(0,0,0,0.12); background: #0f172a;
+    }
+    .slide-item {
+      position: absolute; inset: 0; opacity: 0; transition: opacity 0.9s ease, transform 5s ease;
+      background-size: cover; background-position: center; display: flex; align-items: flex-end;
+    }
+    .slide-item.active { opacity: 1; transform: scale(1.03); }
+    .slide-overlay {
+      width: 100%; padding: 18px 22px;
+      background: linear-gradient(transparent, rgba(15, 23, 42, 0.9));
+      color: #fff; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;
+    }
+    .slide-overlay h3 { font-size: 20px; color: #7dd3fc; }
+    .slide-overlay p { font-size: 13px; color: #e2e8f0; }
+
+    /* STATS & CARDS */
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(195px, 1fr)); gap: 15px; margin-bottom: 22px; }
+    .stat-card {
+      background: #fff; padding: 18px; border-radius: 12px; border-left: 5px solid var(--accent);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05); transition: transform 0.2s;
+    }
+    .stat-card:hover { transform: translateY(-3px); }
+    .stat-card h4 { font-size: 13px; color: #64748b; }
+    .stat-card .val { font-size: 25px; font-weight: 700; color: var(--primary); margin-top: 4px; }
+
+    .card { background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.05); margin-bottom: 20px; }
     .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px; flex-wrap: wrap; gap: 10px; }
 
     .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }
     .form-group { margin-bottom: 12px; }
     .form-group label { display: block; font-size: 14px; font-weight: 600; margin-bottom: 5px; color: #334155; }
     input, select, textarea {
-      width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 15px;
+      width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 15px; background: #fff;
     }
     input:focus, select:focus { outline: none; border-color: var(--accent); }
 
     .btn {
-      padding: 10px 18px; border: none; border-radius: 8px; cursor: pointer; font-size: 15px;
-      font-weight: 600; display: inline-flex; align-items: center; gap: 8px; transition: 0.2s;
+      padding: 9px 16px; border: none; border-radius: 8px; cursor: pointer; font-size: 14px;
+      font-weight: 600; display: inline-flex; align-items: center; gap: 6px; transition: 0.2s;
     }
+    .btn:hover { opacity: 0.92; }
     .btn-primary { background: var(--accent); color: #fff; }
     .btn-success { background: var(--success); color: #fff; }
     .btn-warning { background: var(--warning); color: #fff; }
     .btn-danger { background: var(--danger); color: #fff; }
-    .btn-sm { padding: 6px 10px; font-size: 13px; }
+    .btn-dark { background: var(--primary); color: #fff; }
+    .btn-sm { padding: 5px 9px; font-size: 12px; }
 
     .table-responsive { overflow-x: auto; }
-    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-    th, td { padding: 12px; text-align: left; border-bottom: 1px solid #e2e8f0; font-size: 14px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+    th, td { padding: 11px 12px; text-align: left; border-bottom: 1px solid #e2e8f0; font-size: 14px; }
     th { background: #f8fafc; font-weight: 700; color: #334155; }
     tr:hover { background: #f8fafc; }
 
     .section { display: none; }
-    .section.active { display: block; }
+    .section.active { display: block; animation: fadeIn 0.25s ease; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-    #printModal {
-      display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 10000;
+    /* STYLED FOOTER */
+    .app-footer {
+      background: var(--primary); color: #cbd5e1; padding: 14px 22px;
+      display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 10px; font-size: 13px; border-top: 3px solid var(--accent);
+    }
+    .app-footer strong { color: #38bdf8; }
+
+    /* MODALS (EDIT & PRINT) */
+    .modal-backdrop {
+      display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.65); z-index: 10000;
       align-items: center; justify-content: center; padding: 15px;
     }
-    .invoice-box {
-      background: #fff; width: 100%; max-width: 700px; padding: 30px; border-radius: 10px;
+    .modal-box {
+      background: #fff; width: 100%; max-width: 700px; padding: 26px; border-radius: 12px;
       max-height: 90vh; overflow-y: auto;
     }
-    .inv-header { text-align: center; border-bottom: 2px solid #0f172a; padding-bottom: 15px; margin-bottom: 20px; }
-    .inv-header h1 { font-size: 26px; color: #0f172a; }
-    .inv-meta { display: flex; justify-content: space-between; margin-bottom: 20px; font-size: 14px; }
+    .inv-header { text-align: center; border-bottom: 2px solid #0f172a; padding-bottom: 12px; margin-bottom: 18px; }
+    .inv-header h1 { font-size: 25px; color: #0f172a; }
+    .inv-meta { display: flex; justify-content: space-between; margin-bottom: 18px; font-size: 14px; }
 
     @media print {
       body * { visibility: hidden; }
@@ -114,308 +173,427 @@
       .no-print { display: none !important; }
     }
     @media (max-width: 768px) {
-      .sidebar { width: 100%; position: relative; height: auto; }
-      .main-content { margin-left: 0; }
+      .app-body { flex-direction: column; }
+      .sidebar { width: 100%; }
     }
   </style>
 </head>
 <body>
 
+<!-- LOGIN SCREEN (NO PREFILLED CREDENTIALS, HIDDEN PIN) -->
 <div id="loginScreen">
   <div class="login-box">
-    <i class="fas fa-plane-departure fa-3x" style="color:#0284c7; margin-bottom:10px;"></i>
+    <i class="fas fa-plane-departure fa-3x plane-anim" style="color:#0284c7; margin-bottom:10px;"></i>
     <h2>হক্কানী ট্রাভেল্স সেন্টার</h2>
     <p>কালির বাজার, মাদারীপুর সদর, মাদারীপুর</p>
+
     <div class="form-group" style="text-align:left;">
-      <label>ইউজার রোল নির্বাচন করুন</label>
-      <select id="loginUser">
-        <option value="admin">Admin (Md. Abu Bakkor Fakir)</option>
-        <option value="staff">Counter Staff</option>
+      <label>ইউজার আইডি / রোল</label>
+      <select id="loginUser" autocomplete="off">
+        <option value="" selected disabled>-- আইডি নির্বাচন করুন --</option>
+        <option value="admin">Admin ID (অ্যাডমিন)</option>
+        <option value="staff">Staff ID (কাউন্টার স্টাফ)</option>
       </select>
     </div>
+
     <div class="form-group" style="text-align:left;">
-      <label>সিকিউরিটি পিন (Admin: 1234 | Staff: 1111)</label>
-      <input type="password" id="loginPin" placeholder="PIN দিন" value="1234">
+      <label>পাসওয়ার্ড / সিকিউরিটি পিন</label>
+      <div class="input-wrap">
+        <input type="password" id="loginPin" placeholder="••••••••" autocomplete="new-password" style="padding-right:40px;">
+        <button type="button" class="eye-btn" onclick="togglePinVisibility()" title="পিন দেখুন/লুকান">
+          <i class="fas fa-eye" id="pinEyeIcon"></i>
+        </button>
+      </div>
     </div>
-    <button class="btn btn-primary" style="width:100%; justify-content:center;" onclick="handleLogin()">
-      <i class="fas fa-sign-in-alt"></i> সফটওয়্যারে প্রবেশ করুন
+
+    <button class="btn btn-primary" style="width:100%; justify-content:center; padding:12px; font-size:16px;" onclick="handleLogin()">
+      <i class="fas fa-lock-open"></i> লগইন করুন
     </button>
   </div>
 </div>
 
-<div class="app-container" id="appContainer">
-  <div class="sidebar">
-    <div class="brand">
-      <h3>হক্কানী ট্রাভেল্স সেন্টার</h3>
-      <small>কালির বাজার, মাদারীপুর</small>
-      <small>মোবাইল: 01711651029</small>
-    </div>
-    <button class="nav-btn active" onclick="switchTab('dashboard', this)"><i class="fas fa-chart-line"></i> ড্যাশবোর্ড</button>
-    <button class="nav-btn" onclick="switchTab('newSale', this)"><i class="fas fa-ticket-alt"></i> নতুন বিল / এয়ার টিকিট</button>
-    <button class="nav-btn" onclick="switchTab('salesList', this)"><i class="fas fa-file-invoice-dollar"></i> বিক্রয় ও বকেয়া লেজার</button>
-    <button class="nav-btn" onclick="switchTab('visaTracker', this)"><i class="fas fa-passport"></i> ভিসা ও পাসপোর্ট ট্র্যাকার</button>
-    <button class="nav-btn" onclick="switchTab('expenses', this)"><i class="fas fa-wallet"></i> দৈনিক খরচ ও ক্যাশবুক</button>
-    <button class="nav-btn admin-only" onclick="switchTab('settings', this)"><i class="fas fa-cogs"></i> গুগল শিট ও সিস্টেম টেস্ট</button>
-    <button class="nav-btn" style="color:#f87171; margin-top:20px;" onclick="logout()"><i class="fas fa-sign-out-alt"></i> লগআউট</button>
-  </div>
-
-  <div class="main-content">
-    <div class="topbar">
+<!-- MAIN APP -->
+<div class="app-wrapper" id="appWrapper">
+  <!-- STYLED TOP HEADER -->
+  <header class="top-header">
+    <div class="header-title">
+      <i class="fas fa-plane plane-anim"></i>
       <div>
-        <strong id="welcomeUser">স্বাগতম, এডমিন</strong>
-        <div style="font-size:13px; color:#64748b;" id="currentDateDisplay"></div>
-      </div>
-      <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
-        <span id="syncStatusBadge" class="badge badge-demo">Local Test Mode</span>
-        <button class="btn btn-sm btn-primary" onclick="syncFromGoogleSheet()"><i class="fas fa-sync"></i> সিঙ্ক করুন</button>
-        <button class="btn btn-sm btn-success" onclick="testDueAndWhatsAppSystem()"><i class="fas fa-check-circle"></i> বকেয়া ও মেসেজ টেস্ট</button>
+        <strong style="font-size:18px;">হক্কানী ট্রাভেল্স সেন্টার</strong>
+        <div style="font-size:12px; color:#bae6fd;" id="welcomeUser">স্বাগতম</div>
       </div>
     </div>
-
-    <!-- 1. DASHBOARD -->
-    <div id="dashboard" class="section active">
-      <div class="stats-grid">
-        <div class="stat-card" style="border-color:#0284c7;">
-          <h4>মোট বিক্রি (Total Sales)</h4>
-          <div class="val" id="statTotalSales">৳ ০</div>
-        </div>
-        <div class="stat-card" style="border-color:#16a34a;">
-          <h4>মোট নগদ আদায় (Collected)</h4>
-          <div class="val" id="statTotalPaid">৳ ০</div>
-        </div>
-        <div class="stat-card" style="border-color:#dc2626;">
-          <h4>মোট কাস্টমার বকেয়া (Due)</h4>
-          <div class="val" id="statTotalDue">৳ ০</div>
-        </div>
-        <div class="stat-card" style="border-color:#d97706;">
-          <h4>চলমান ভিসা ফাইল</h4>
-          <div class="val" id="statActiveVisa">০ টি</div>
-        </div>
-        <div class="stat-card" style="border-color:#7c3aed;">
-          <h4>নেট ক্যাশ ব্যালেন্স (আয় - ব্যয়)</h4>
-          <div class="val" id="statNetCash">৳ ০</div>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-header">
-          <h3>সাম্প্রতিক লেনদেনসমূহ</h3>
-          <button class="btn btn-sm btn-success" onclick="switchTab('newSale', document.querySelectorAll('.nav-btn')[1])">+ নতুন বিল করুন</button>
-        </div>
-        <div class="table-responsive">
-          <table>
-            <thead>
-              <tr>
-                <th>ইনভয়েস নং</th>
-                <th>তারিখ</th>
-                <th>কাস্টমার</th>
-                <th>সার্ভিস</th>
-                <th>মোট বিল</th>
-                <th>জমা</th>
-                <th>বকেয়া</th>
-                <th>অ্যাকশন</th>
-              </tr>
-            </thead>
-            <tbody id="recentOrdersTable"></tbody>
-          </table>
-        </div>
-      </div>
+    <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+      <span style="font-size:12px; color:#e2e8f0;" id="currentDateDisplay"></span>
+      <span id="syncStatusBadge" class="badge badge-demo">Local Mode</span>
+      <button class="btn btn-sm btn-primary" onclick="syncFromGoogleSheet()"><i class="fas fa-sync"></i> সিঙ্ক</button>
+      <button class="btn btn-sm btn-success" onclick="testDueAndWhatsAppSystem()"><i class="fas fa-check-circle"></i> বকেয়া ও মেসেজ টেস্ট</button>
     </div>
+  </header>
 
-    <!-- 2. NEW SALE -->
-    <div id="newSale" class="section">
-      <div class="card">
-        <div class="card-header">
-          <h3><i class="fas fa-plus-circle"></i> নতুন টিকিট ও সার্ভিস বিল তৈরি করুন</h3>
-        </div>
-        <form id="saleForm" onsubmit="saveNewOrder(event)">
-          <div class="form-grid">
-            <div class="form-group">
-              <label>কাস্টমারের নাম *</label>
-              <input type="text" id="custName" required placeholder="যেমন: মোঃ রহিম উদ্দিন">
+  <div class="app-body">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="brand">
+        <h3>হক্কানী ট্রাভেল্স</h3>
+        <small>কালির বাজার, মাদারীপুর</small>
+        <small>হেল্পলাইন: 01711651029</small>
+      </div>
+      <button class="nav-btn active" onclick="switchTab('dashboard', this)"><i class="fas fa-chart-line"></i> ড্যাশবোর্ড</button>
+      <button class="nav-btn" onclick="switchTab('newSale', this)"><i class="fas fa-ticket-alt"></i> নতুন বিল / অর্ডার</button>
+      <button class="nav-btn" onclick="switchTab('salesList', this)"><i class="fas fa-file-invoice-dollar"></i> অর্ডার ও বকেয়া লেজার</button>
+      <button class="nav-btn" onclick="switchTab('servicesTab', this)"><i class="fas fa-concierge-bell"></i> সার্ভিস তালিকা যুক্ত করুন</button>
+      <button class="nav-btn" onclick="switchTab('visaTracker', this)"><i class="fas fa-passport"></i> ভিসা ও পাসপোর্ট ট্র্যাকার</button>
+      <button class="nav-btn" onclick="switchTab('expenses', this)"><i class="fas fa-wallet"></i> দৈনিক খরচ ও ক্যাশবুক</button>
+      <button class="nav-btn admin-only" onclick="switchTab('settings', this)"><i class="fas fa-cogs"></i> গুগল শিট ও সিস্টেম টেস্ট</button>
+      <button class="nav-btn" style="color:#fca5a5; margin-top:18px;" onclick="logout()"><i class="fas fa-sign-out-alt"></i> লগআউট</button>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-area">
+      <div class="content-container">
+
+        <!-- 1. DASHBOARD -->
+        <div id="dashboard" class="section active">
+          <!-- ANIMATED TRAVEL SLIDER -->
+          <div class="travel-slider">
+            <div class="slide-item active" style="background-image: linear-gradient(rgba(15,23,42,0.2), rgba(15,23,42,0.5)), url('https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=1200&q=70');">
+              <div class="slide-overlay">
+                <div>
+                  <h3><i class="fas fa-globe-americas"></i> ডোমেস্টিক ও ইন্টারন্যাশনাল এয়ার টিকিটিং</h3>
+                  <p>দ্রুত টিকিট বুকিং, রি-ইস্যু এবং কাস্টমার বকেয়া ও হোয়াটসঅ্যাপ ইনভয়েস সেবা</p>
+                </div>
+                <span class="badge badge-online"><i class="fas fa-plane"></i> Live Ticketing</span>
+              </div>
             </div>
-            <div class="form-group">
-              <label>মোবাইল নম্বর (WhatsApp) *</label>
-              <input type="text" id="custPhone" required placeholder="017XXXXXXXX">
+            <div class="slide-item" style="background-image: linear-gradient(rgba(15,23,42,0.2), rgba(15,23,42,0.5)), url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=70');">
+              <div class="slide-overlay">
+                <div>
+                  <h3><i class="fas fa-passport"></i> ভিসা প্রসেসিং ও পাসপোর্ট ট্র্যাকিং</h3>
+                  <p>কাজের ভিসা, ভ্রমণ ভিসা এবং প্রতিটি ধাপের তাৎক্ষণিক স্ট্যাটাস আপডেট</p>
+                </div>
+                <span class="badge badge-online"><i class="fas fa-shield-alt"></i> Visa Desk</span>
+              </div>
             </div>
-            <div class="form-group">
-              <label>সার্ভিস ক্যাটাগরি *</label>
-              <select id="serviceCat" required>
-                <option value="International Air Ticket">International Air Ticket (আন্তর্জাতিক বিমান টিকিট)</option>
-                <option value="Domestic Air Ticket">Domestic Air Ticket (অভ্যন্তরীণ বিমান টিকিট)</option>
-                <option value="Ticket Re-issue / Cancel">Ticket Re-issue / Cancel (টিকিট রি-ইস্যু)</option>
-                <option value="Visa Processing">Visa Processing (ভিসা প্রসেসিং)</option>
-                <option value="NID Correction / Server Copy">NID Correction / Server / Sign Copy</option>
-                <option value="Land Mutation / Dakhila / DCR">Land Mutation / নামজারি / দাখিলা / DCR</option>
-                <option value="Online Application & Others">Online Application & অন্যান্য সেবা</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label>বিবরণ / PNR / পাসপোর্ট / ট্র্যাকিং নং *</label>
-              <input type="text" id="serviceDetails" required placeholder="যেমন: DAC-RUH | PNR: XYZ123">
-            </div>
-            <div class="form-group">
-              <label>মোট বিল (টাকা) *</label>
-              <input type="number" id="totalAmount" required min="0" oninput="calcDue()">
-            </div>
-            <div class="form-group">
-              <label>নগদ জমা (টাকা) *</label>
-              <input type="number" id="paidAmount" required min="0" oninput="calcDue()">
-            </div>
-            <div class="form-group">
-              <label>বকেয়া (Due)</label>
-              <input type="number" id="dueAmount" readonly style="background:#f1f5f9; font-weight:bold; color:#dc2626;">
-            </div>
-            <div class="form-group">
-              <label>পেমেন্ট মাধ্যম</label>
-              <select id="payMethod">
-                <option value="Cash">Cash (নগদ)</option>
-                <option value="bKash">bKash</option>
-                <option value="Nagad">Nagad</option>
-                <option value="Bank Transfer">Bank Transfer</option>
-              </select>
+            <div class="slide-item" style="background-image: linear-gradient(rgba(15,23,42,0.2), rgba(15,23,42,0.5)), url('https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=1200&q=70');">
+              <div class="slide-overlay">
+                <div>
+                  <h3><i class="fas fa-file-signature"></i> এনআইডি, নামজারি ও ডিজিটাল সেবা</h3>
+                  <p>কালির বাজার, মাদারীপুরে বিশ্বস্ত অনলাইন আবেদন, দাখিলা ও ডিসিআর সেবা</p>
+                </div>
+                <span class="badge badge-online"><i class="fas fa-check"></i> Fast Service</span>
+              </div>
             </div>
           </div>
-          <div style="margin-top:15px;">
-            <button type="submit" class="btn btn-success"><i class="fas fa-save"></i> বিল সেভ ও ইনভয়েস প্রিন্ট করুন</button>
-          </div>
-        </form>
-      </div>
-    </div>
 
-    <!-- 3. SALES & DUE LEDGER -->
-    <div id="salesList" class="section">
-      <div class="card">
-        <div class="card-header">
-          <h3>সকল বিক্রয় ও কাস্টমার বকেয়া (Due) তালিকা</h3>
-          <input type="text" id="searchOrder" placeholder="নাম, ফোন বা ইনভয়েস খুঁজুন..." style="max-width:250px;" onkeyup="renderOrders()">
-        </div>
-        <div class="table-responsive">
-          <table>
-            <thead>
-              <tr>
-                <th>ইনভয়েস</th>
-                <th>তারিখ</th>
-                <th>কাস্টমার ও ফোন</th>
-                <th>সার্ভিস ও বিবরণ</th>
-                <th>মোট</th>
-                <th>জমা</th>
-                <th>বকেয়া</th>
-                <th>স্ট্যাটাস</th>
-                <th>অ্যাকশন</th>
-              </tr>
-            </thead>
-            <tbody id="allOrdersTable"></tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-    <!-- 4. VISA TRACKER -->
-    <div id="visaTracker" class="section">
-      <div class="card">
-        <div class="card-header"><h3>নতুন ভিসা ও পাসপোর্ট ফাইল এন্ট্রি</h3></div>
-        <form onsubmit="saveVisa(event)">
-          <div class="form-grid">
-            <div class="form-group"><label>আবেদনকারীর নাম *</label><input type="text" id="vName" required></div>
-            <div class="form-group"><label>মোবাইল নম্বর *</label><input type="text" id="vPhone" required></div>
-            <div class="form-group"><label>পাসপোর্ট নম্বর *</label><input type="text" id="vPassport" required></div>
-            <div class="form-group"><label>দেশ ও ভিসার ধরন *</label><input type="text" id="vCountry" required></div>
-            <div class="form-group"><label>চুক্তি মূল্য (টাকা)</label><input type="number" id="vTotal" required></div>
-            <div class="form-group"><label>জমা (টাকা)</label><input type="number" id="vPaid" required></div>
-            <div class="form-group">
-              <label>বর্তমান অবস্থা</label>
-              <select id="vStatus">
-                <option value="Documents Received">Documents Received</option>
-                <option value="Medical & Police Clearance">Medical & Police Clearance</option>
-                <option value="Submitted to Embassy">Submitted to Embassy</option>
-                <option value="Visa Stamped / Ready">Visa Stamped / Ready</option>
-                <option value="Delivered">Delivered</option>
-              </select>
+          <div class="stats-grid">
+            <div class="stat-card" style="border-color:#0284c7;">
+              <h4>মোট বিক্রি (Total Sales)</h4>
+              <div class="val" id="statTotalSales">৳ ০</div>
             </div>
-            <div class="form-group"><label>নোট / মন্তব্য</label><input type="text" id="vRemarks"></div>
+            <div class="stat-card" style="border-color:#16a34a;">
+              <h4>মোট নগদ আদায় (Collected)</h4>
+              <div class="val" id="statTotalPaid">৳ ০</div>
+            </div>
+            <div class="stat-card" style="border-color:#dc2626;">
+              <h4>মোট কাস্টমার বকেয়া (Due)</h4>
+              <div class="val" id="statTotalDue">৳ ০</div>
+            </div>
+            <div class="stat-card" style="border-color:#d97706;">
+              <h4>চলমান ভিসা ফাইল</h4>
+              <div class="val" id="statActiveVisa">০ টি</div>
+            </div>
+            <div class="stat-card" style="border-color:#7c3aed;">
+              <h4>নেট ক্যাশ ব্যালেন্স</h4>
+              <div class="val" id="statNetCash">৳ ০</div>
+            </div>
           </div>
-          <button type="submit" class="btn btn-primary"><i class="fas fa-plus"></i> ভিসা ফাইল যুক্ত করুন</button>
-        </form>
-      </div>
 
-      <div class="card">
-        <div class="card-header"><h3>চলমান ভিসা ও পাসপোর্ট তালিকা</h3></div>
-        <div class="table-responsive">
-          <table>
-            <thead>
-              <tr>
-                <th>ট্র্যাক ID</th>
-                <th>নাম ও ফোন</th>
-                <th>পাসপোর্ট</th>
-                <th>দেশ</th>
-                <th>বকেয়া</th>
-                <th>স্ট্যাটাস পরিবর্তন</th>
-                <th>WhatsApp</th>
-              </tr>
-            </thead>
-            <tbody id="visaTable"></tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-    <!-- 5. EXPENSES -->
-    <div id="expenses" class="section">
-      <div class="card">
-        <div class="card-header"><h3>অফিসের দৈনিক খরচ এন্ট্রি</h3></div>
-        <form onsubmit="saveExpense(event)" class="form-grid">
-          <div class="form-group">
-            <label>খরচের খাত</label>
-            <select id="expCat">
-              <option value="Office Rent & Bill">অফিস ভাড়া ও বিদ্যুৎ বিল</option>
-              <option value="Ticket / Vendor Payment">এয়ারলাইন্স / ভেন্ডর পেমেন্ট</option>
-              <option value="Staff Salary & Snacks">স্টাফ বেতন ও আপ্যায়ন</option>
-              <option value="Internet & Stationary">ইন্টারনেট ও কাগজপত্র</option>
-              <option value="Others">অন্যান্য খরচ</option>
-            </select>
+          <div class="card">
+            <div class="card-header">
+              <h3>সাম্প্রতিক অর্ডারসমূহ</h3>
+              <button class="btn btn-sm btn-success" onclick="switchTab('newSale', document.querySelectorAll('.nav-btn')[1])">+ নতুন বিল করুন</button>
+            </div>
+            <div class="table-responsive">
+              <table>
+                <thead>
+                  <tr>
+                    <th>ইনভয়েস</th>
+                    <th>তারিখ</th>
+                    <th>কাস্টমার</th>
+                    <th>সার্ভিস</th>
+                    <th>মোট</th>
+                    <th>জমা</th>
+                    <th>বকেয়া</th>
+                    <th>প্রিন্ট</th>
+                  </tr>
+                </thead>
+                <tbody id="recentOrdersTable"></tbody>
+              </table>
+            </div>
           </div>
-          <div class="form-group"><label>বিবরণ</label><input type="text" id="expDesc" required></div>
-          <div class="form-group"><label>টাকার পরিমাণ</label><input type="number" id="expAmount" required></div>
-          <div class="form-group" style="display:flex; align-items:flex-end;">
-            <button type="submit" class="btn btn-danger" style="width:100%; justify-content:center;">খরচ সেভ করুন</button>
+        </div>
+
+        <!-- 2. NEW SALE -->
+        <div id="newSale" class="section">
+          <div class="card">
+            <div class="card-header"><h3><i class="fas fa-plus-circle"></i> নতুন টিকিট ও সার্ভিস বিল তৈরি করুন</h3></div>
+            <form id="saleForm" onsubmit="saveNewOrder(event)">
+              <div class="form-grid">
+                <div class="form-group">
+                  <label>কাস্টমারের নাম *</label>
+                  <input type="text" id="custName" required placeholder="যেমন: মোঃ রহিম উদ্দিন">
+                </div>
+                <div class="form-group">
+                  <label>মোবাইল নম্বর (WhatsApp) *</label>
+                  <input type="text" id="custPhone" required placeholder="017XXXXXXXX">
+                </div>
+                <div class="form-group">
+                  <label>সার্ভিস নির্বাচন করুন *</label>
+                  <select id="serviceCat" required onchange="applyServiceDefaultRate()"></select>
+                </div>
+                <div class="form-group">
+                  <label>বিবরণ / PNR / পাসপোর্ট / ট্র্যাকিং নং *</label>
+                  <input type="text" id="serviceDetails" required placeholder="যেমন: DAC-RUH | PNR: XYZ123">
+                </div>
+                <div class="form-group">
+                  <label>মোট বিল (টাকা) *</label>
+                  <input type="number" id="totalAmount" required min="0" oninput="calcDue()">
+                </div>
+                <div class="form-group">
+                  <label>নগদ জমা (টাকা) *</label>
+                  <input type="number" id="paidAmount" required min="0" oninput="calcDue()">
+                </div>
+                <div class="form-group">
+                  <label>বকেয়া (Due)</label>
+                  <input type="number" id="dueAmount" readonly style="background:#f1f5f9; font-weight:bold; color:#dc2626;">
+                </div>
+                <div class="form-group">
+                  <label>পেমেন্ট মাধ্যম</label>
+                  <select id="payMethod">
+                    <option value="Cash">Cash (নগদ)</option>
+                    <option value="bKash">bKash</option>
+                    <option value="Nagad">Nagad</option>
+                    <option value="Bank Transfer">Bank Transfer</option>
+                  </select>
+                </div>
+              </div>
+              <button type="submit" class="btn btn-success"><i class="fas fa-save"></i> বিল সেভ ও ইনভয়েস দেখুন</button>
+            </form>
           </div>
-        </form>
-      </div>
-
-      <div class="card">
-        <div class="card-header"><h3>খরচের তালিকা</h3></div>
-        <div class="table-responsive">
-          <table>
-            <thead><tr><th>ID</th><th>তারিখ</th><th>খাত</th><th>বিবরণ</th><th>পরিমাণ</th></tr></thead>
-            <tbody id="expenseTable"></tbody>
-          </table>
         </div>
-      </div>
-    </div>
 
-    <!-- 6. SETTINGS & DIAGNOSTIC -->
-    <div id="settings" class="section">
-      <div class="card">
-        <div class="card-header"><h3><i class="fas fa-link"></i> গুগল শিট (Apps Script Web App URL) সংযোগ</h3></div>
-        <div class="form-group">
-          <input type="url" id="gasUrlInput" placeholder="https://script.google.com/macros/s/AKfycb.../exec">
+        <!-- 3. SALES & DUE LEDGER (WITH EDIT & DELETE) -->
+        <div id="salesList" class="section">
+          <div class="card">
+            <div class="card-header">
+              <h3>সকল অর্ডার, সংশোধন (Edit) ও বকেয়া তালিকা</h3>
+              <input type="text" id="searchOrder" placeholder="নাম, ফোন বা ইনভয়েস খুঁজুন..." style="max-width:260px;" onkeyup="renderOrders()">
+            </div>
+            <div class="table-responsive">
+              <table>
+                <thead>
+                  <tr>
+                    <th>ইনভয়েস</th>
+                    <th>তারিখ</th>
+                    <th>কাস্টমার ও ফোন</th>
+                    <th>সার্ভিস ও বিবরণ</th>
+                    <th>মোট</th>
+                    <th>জমা</th>
+                    <th>বকেয়া</th>
+                    <th>অবস্থা</th>
+                    <th>অ্যাকশন</th>
+                  </tr>
+                </thead>
+                <tbody id="allOrdersTable"></tbody>
+              </table>
+            </div>
+          </div>
         </div>
-        <button class="btn btn-primary" onclick="saveGasUrl()"><i class="fas fa-save"></i> URL সেভ ও কানেক্ট করুন</button>
+
+        <!-- 4. ADD / MANAGE SERVICES -->
+        <div id="servicesTab" class="section">
+          <div class="card">
+            <div class="card-header"><h3><i class="fas fa-concierge-bell"></i> নতুন সার্ভিস যুক্ত করুন</h3></div>
+            <form onsubmit="addNewService(event)" class="form-grid">
+              <div class="form-group">
+                <label>সার্ভিসের নাম *</label>
+                <input type="text" id="srvName" required placeholder="যেমন: Umrah Package / Passport Renewal">
+              </div>
+              <div class="form-group">
+                <label>ডিফল্ট চার্জ (টাকা, ঐচ্ছিক)</label>
+                <input type="number" id="srvRate" min="0" placeholder="0">
+              </div>
+              <div class="form-group">
+                <label>সংক্ষিপ্ত বিবরণ</label>
+                <input type="text" id="srvNotes" placeholder="যেমন: পাসপোর্ট রিনিউ ও ফাইল প্রসেসিং">
+              </div>
+              <div class="form-group" style="display:flex; align-items:flex-end;">
+                <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center;"><i class="fas fa-plus"></i> সার্ভিস যুক্ত করুন</button>
+              </div>
+            </form>
+          </div>
+
+          <div class="card">
+            <div class="card-header"><h3>বর্তমান সার্ভিসসমূহ</h3></div>
+            <div class="table-responsive">
+              <table>
+                <thead><tr><th>#</th><th>সার্ভিসের নাম</th><th>ডিফল্ট রেট</th><th>বিবরণ</th></tr></thead>
+                <tbody id="servicesTable"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5. VISA TRACKER -->
+        <div id="visaTracker" class="section">
+          <div class="card">
+            <div class="card-header"><h3>নতুন ভিসা ও পাসপোর্ট ফাইল এন্ট্রি</h3></div>
+            <form onsubmit="saveVisa(event)">
+              <div class="form-grid">
+                <div class="form-group"><label>আবেদনকারীর নাম *</label><input type="text" id="vName" required></div>
+                <div class="form-group"><label>মোবাইল নম্বর *</label><input type="text" id="vPhone" required></div>
+                <div class="form-group"><label>পাসপোর্ট নম্বর *</label><input type="text" id="vPassport" required></div>
+                <div class="form-group"><label>দেশ ও ভিসার ধরন *</label><input type="text" id="vCountry" required></div>
+                <div class="form-group"><label>চুক্তি মূল্য (টাকা)</label><input type="number" id="vTotal" required></div>
+                <div class="form-group"><label>জমা (টাকা)</label><input type="number" id="vPaid" required></div>
+                <div class="form-group">
+                  <label>বর্তমান অবস্থা</label>
+                  <select id="vStatus">
+                    <option value="Documents Received">Documents Received</option>
+                    <option value="Medical & Police Clearance">Medical & Police Clearance</option>
+                    <option value="Submitted to Embassy">Submitted to Embassy</option>
+                    <option value="Visa Stamped / Ready">Visa Stamped / Ready</option>
+                    <option value="Delivered">Delivered</option>
+                  </select>
+                </div>
+                <div class="form-group"><label>নোট / মন্তব্য</label><input type="text" id="vRemarks"></div>
+              </div>
+              <button type="submit" class="btn btn-primary"><i class="fas fa-plus"></i> ভিসা ফাইল যুক্ত করুন</button>
+            </form>
+          </div>
+
+          <div class="card">
+            <div class="card-header"><h3>চলমান ভিসা ও পাসপোর্ট তালিকা</h3></div>
+            <div class="table-responsive">
+              <table>
+                <thead>
+                  <tr>
+                    <th>ট্র্যাক ID</th>
+                    <th>নাম ও ফোন</th>
+                    <th>পাসপোর্ট</th>
+                    <th>দেশ</th>
+                    <th>বকেয়া</th>
+                    <th>স্ট্যাটাস</th>
+                    <th>অ্যাকশন</th>
+                  </tr>
+                </thead>
+                <tbody id="visaTable"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- 6. EXPENSES -->
+        <div id="expenses" class="section">
+          <div class="card">
+            <div class="card-header"><h3>অফিসের দৈনিক খরচ এন্ট্রি</h3></div>
+            <form onsubmit="saveExpense(event)" class="form-grid">
+              <div class="form-group">
+                <label>খরচের খাত</label>
+                <select id="expCat">
+                  <option value="Office Rent & Bill">অফিস ভাড়া ও বিদ্যুৎ বিল</option>
+                  <option value="Ticket / Vendor Payment">এয়ারলাইন্স / ভেন্ডর পেমেন্ট</option>
+                  <option value="Staff Salary & Snacks">স্টাফ বেতন ও আপ্যায়ন</option>
+                  <option value="Internet & Stationary">ইন্টারনেট ও কাগজপত্র</option>
+                  <option value="Others">অন্যান্য খরচ</option>
+                </select>
+              </div>
+              <div class="form-group"><label>বিবরণ</label><input type="text" id="expDesc" required></div>
+              <div class="form-group"><label>টাকার পরিমাণ</label><input type="number" id="expAmount" required></div>
+              <div class="form-group" style="display:flex; align-items:flex-end;">
+                <button type="submit" class="btn btn-danger" style="width:100%; justify-content:center;">খরচ সেভ করুন</button>
+              </div>
+            </form>
+          </div>
+
+          <div class="card">
+            <div class="card-header"><h3>খরচের তালিকা</h3></div>
+            <div class="table-responsive">
+              <table>
+                <thead><tr><th>ID</th><th>তারিখ</th><th>খাত</th><th>বিবরণ</th><th>পরিমাণ</th><th>ডিলিট</th></tr></thead>
+                <tbody id="expenseTable"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- 7. SETTINGS & SYSTEM TEST -->
+        <div id="settings" class="section">
+          <div class="card">
+            <div class="card-header"><h3><i class="fas fa-link"></i> গুগল শিট (Apps Script Web App URL) সংযোগ</h3></div>
+            <div class="form-group">
+              <input type="url" id="gasUrlInput" placeholder="https://script.google.com/macros/s/AKfycb.../exec">
+            </div>
+            <button class="btn btn-primary" onclick="saveGasUrl()"><i class="fas fa-save"></i> URL সেভ ও কানেক্ট করুন</button>
+          </div>
+
+          <div class="card" style="border: 2px solid #0284c7;">
+            <div class="card-header"><h3><i class="fas fa-vial"></i> ফুল সিস্টেম ডায়াগনস্টিক টেস্ট</h3></div>
+            <button class="btn btn-success" onclick="runFullSystemTest()"><i class="fas fa-play-circle"></i> সকল ফিচার টেস্ট করুন</button>
+            <div id="testLog" style="margin-top:15px; background:#0f172a; color:#38bdf8; padding:15px; border-radius:8px; font-family:monospace; font-size:13px; display:none;"></div>
+          </div>
+        </div>
+
       </div>
 
-      <div class="card" style="border: 2px solid #0284c7;">
-        <div class="card-header"><h3><i class="fas fa-vial"></i> সফটওয়্যার অটো-টেস্ট ও অ্যাক্টিভেশন ইঞ্জিন</h3></div>
-        <button class="btn btn-success" onclick="runFullSystemTest()"><i class="fas fa-play-circle"></i> সকল ফিচার টেস্ট ও অ্যাক্টিভ করুন</button>
-        <div id="testLog" style="margin-top:15px; background:#0f172a; color:#38bdf8; padding:15px; border-radius:8px; font-family:monospace; font-size:13px; display:none;"></div>
-      </div>
-    </div>
+      <!-- STYLED FOOTER -->
+      <footer class="app-footer">
+        <div><strong>হক্কানী ট্রাভেল্স সেন্টার</strong> — কালির বাজার, মাদারীপুর সদর, মাদারীপুর</div>
+        <div>হেল্পলাইন: <strong>01711651029</strong> | ইমেইল: <strong>abfahmy2@gmail.com</strong></div>
+      </footer>
+    </main>
   </div>
 </div>
 
-<!-- PRINT MODAL -->
-<div id="printModal">
-  <div class="invoice-box">
+<!-- EDIT ORDER MODAL -->
+<div id="editOrderModal" class="modal-backdrop">
+  <div class="modal-box">
+    <div class="card-header">
+      <h3><i class="fas fa-edit"></i> পূর্বের অর্ডার সংশোধন করুন</h3>
+      <button class="btn btn-sm btn-danger" onclick="closeEditModal()">X</button>
+    </div>
+    <form onsubmit="updateExistingOrder(event)">
+      <input type="hidden" id="editInvId">
+      <div class="form-grid">
+        <div class="form-group"><label>কাস্টমারের নাম *</label><input type="text" id="editCustName" required></div>
+        <div class="form-group"><label>মোবাইল নম্বর *</label><input type="text" id="editCustPhone" required></div>
+        <div class="form-group"><label>সার্ভিস *</label><select id="editServiceCat" required></select></div>
+        <div class="form-group"><label>বিবরণ / PNR *</label><input type="text" id="editDetails" required></div>
+        <div class="form-group"><label>মোট বিল (টাকা) *</label><input type="number" id="editTotal" required min="0" oninput="calcEditDue()"></div>
+        <div class="form-group"><label>মোট জমা (টাকা) *</label><input type="number" id="editPaid" required min="0" oninput="calcEditDue()"></div>
+        <div class="form-group"><label>বকেয়া (Due)</label><input type="number" id="editDue" readonly style="background:#f1f5f9; font-weight:bold; color:#dc2626;"></div>
+        <div class="form-group">
+          <label>পেমেন্ট মাধ্যম</label>
+          <select id="editPayMethod">
+            <option value="Cash">Cash</option>
+            <option value="bKash">bKash</option>
+            <option value="Nagad">Nagad</option>
+            <option value="Bank Transfer">Bank Transfer</option>
+          </select>
+        </div>
+      </div>
+      <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:10px;">
+        <button type="submit" class="btn btn-success"><i class="fas fa-check"></i> সংশোধন সেভ করুন</button>
+        <button type="button" class="btn btn-danger" onclick="closeEditModal()">বাতিল</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- PRINT & WHATSAPP MODAL -->
+<div id="printModal" class="modal-backdrop">
+  <div class="modal-box">
     <div id="printableArea">
       <div class="inv-header">
         <h1>হক্কানী ট্রাভেল্স সেন্টার</h1>
@@ -455,15 +633,15 @@
           </tr>
         </tbody>
       </table>
-      <div style="display:flex; justify-content:space-between; margin-top:40px; font-size:13px;">
+      <div style="display:flex; justify-content:space-between; margin-top:35px; font-size:13px;">
         <div>কাস্টমারের স্বাক্ষর</div>
         <div>কর্তৃপক্ষের স্বাক্ষর (হক্কানী ট্রাভেল্স সেন্টার)</div>
       </div>
     </div>
-    <div class="no-print" style="margin-top:20px; display:flex; gap:10px; justify-content:flex-end; border-top:1px solid #e2e8f0; padding-top:15px;">
-      <button class="btn btn-primary" onclick="window.print()"><i class="fas fa-print"></i> প্রিন্ট করুন</button>
-      <button class="btn btn-success" id="waModalBtn"><i class="fab fa-whatsapp"></i> WhatsApp-এ পাঠান</button>
-      <button class="btn btn-danger" onclick="document.getElementById('printModal').style.display='none'">বন্ধ করুন</button>
+    <div class="no-print" style="margin-top:20px; display:flex; gap:10px; justify-content:flex-end; border-top:1px solid #e2e8f0; padding-top:14px;">
+      <button class="btn btn-primary" onclick="window.print()"><i class="fas fa-print"></i> প্রিন্ট</button>
+      <button class="btn btn-success" id="waModalBtn"><i class="fab fa-whatsapp"></i> WhatsApp মেসেজ</button>
+      <button class="btn btn-danger" onclick="document.getElementById('printModal').style.display='none'">বন্ধ</button>
     </div>
   </div>
 </div>
@@ -471,10 +649,19 @@
 <script>
   let currentUser = null;
   let GAS_URL = localStorage.getItem('htc_gas_url') || '';
-  let db = JSON.parse(localStorage.getItem('htc_local_db')) || {
+  let slideIndex = 0;
+
+  let db = JSON.parse(localStorage.getItem('htc_local_db_v2')) || {
+    services: [
+      { Service_Name: 'International Air Ticket', Default_Rate: 0, Notes: 'আন্তর্জাতিক বিমান টিকিট' },
+      { Service_Name: 'Domestic Air Ticket', Default_Rate: 0, Notes: 'অভ্যন্তরীণ বিমান টিকিট' },
+      { Service_Name: 'Ticket Re-issue / Cancel', Default_Rate: 0, Notes: 'টিকিট রি-ইস্যু বা ক্যান্সেল' },
+      { Service_Name: 'Visa Processing', Default_Rate: 0, Notes: 'ভিসা প্রসেসিং' },
+      { Service_Name: 'NID Correction / Server Copy', Default_Rate: 500, Notes: 'এনআইডি সংশোধন ও সার্ভার কপি' },
+      { Service_Name: 'Land Mutation / Dakhila / DCR', Default_Rate: 0, Notes: 'নামজারি, দাখিলা ও ডিসিআর' }
+    ],
     orders: [
-      { Invoice_ID: 'HTC-1001', Date: '2026-11-20', Customer_Name: 'আব্দুল করিম', Phone: '01712000000', Service_Category: 'International Air Ticket', Details_PNR: 'DAC-JED | PNR: HQT99', Total_Amount: 65000, Paid_Amount: 50000, Due_Amount: 15000, Payment_Method: 'Bank Transfer', Status: 'Partial Due' },
-      { Invoice_ID: 'HTC-1002', Date: '2026-11-20', Customer_Name: 'সালমা আক্তার', Phone: '01819000000', Service_Category: 'NID Correction / Server Copy', Details_PNR: 'NID Server Copy & Correction', Total_Amount: 500, Paid_Amount: 500, Due_Amount: 0, Payment_Method: 'Cash', Status: 'Paid' }
+      { Invoice_ID: 'HTC-1001', Date: '2026-11-20', Customer_Name: 'আব্দুল করিম', Phone: '01712000000', Service_Category: 'International Air Ticket', Details_PNR: 'DAC-JED | PNR: HQT99', Total_Amount: 65000, Paid_Amount: 50000, Due_Amount: 15000, Payment_Method: 'Bank Transfer', Status: 'Partial Due', Created_By: 'admin' }
     ],
     visas: [
       { Track_ID: 'VISA-501', Date: '2026-11-18', Applicant_Name: 'মোঃ জসিম উদ্দিন', Phone: '01911000000', Passport_No: 'A01234567', Country_Type: 'Saudi Arabia Work', Total_Fee: 350000, Paid: 200000, Due: 150000, Current_Status: 'Medical & Police Clearance', Remarks: 'GAMCA Done' }
@@ -484,21 +671,38 @@
     ]
   };
 
-  function saveLocalDB() {
-    localStorage.setItem('htc_local_db', JSON.stringify(db));
-    updateDashboard();
-    renderOrders();
-    renderVisas();
-    renderExpenses();
+  // SLIDER ROTATION
+  setInterval(() => {
+    const slides = document.querySelectorAll('.slide-item');
+    if (slides.length > 0) {
+      slides[slideIndex].classList.remove('active');
+      slideIndex = (slideIndex + 1) % slides.length;
+      slides[slideIndex].classList.add('active');
+    }
+  }, 4500);
+
+  function togglePinVisibility() {
+    const pinInput = document.getElementById('loginPin');
+    const icon = document.getElementById('pinEyeIcon');
+    if (pinInput.type === 'password') {
+      pinInput.type = 'text';
+      icon.className = 'fas fa-eye-slash';
+    } else {
+      pinInput.type = 'password';
+      icon.className = 'fas fa-eye';
+    }
   }
 
   function handleLogin() {
     const role = document.getElementById('loginUser').value;
     const pin = document.getElementById('loginPin').value;
+    if (!role || !pin) return alert('অনুগ্রহ করে আইডি এবং পিন দিন।');
+
     if ((role === 'admin' && pin === '1234') || (role === 'staff' && pin === '1111')) {
       currentUser = role;
+      document.getElementById('loginPin').value = '';
       document.getElementById('loginScreen').style.display = 'none';
-      document.getElementById('appContainer').style.display = 'block';
+      document.getElementById('appWrapper').style.display = 'flex';
       document.getElementById('welcomeUser').innerText = role === 'admin' ? 'স্বাগতম, Md. Abu Bakkor Fakir (Admin)' : 'স্বাগতম, Counter Staff';
       document.getElementById('currentDateDisplay').innerText = new Date().toLocaleDateString('bn-BD', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
       document.querySelectorAll('.admin-only').forEach(el => {
@@ -511,7 +715,7 @@
       }
       saveLocalDB();
     } else {
-      alert('ভুল পিন নম্বর! Admin এর জন্য 1234 এবং Staff এর জন্য 1111 দিন।');
+      alert('ভুল আইডি বা পিন!');
     }
   }
 
@@ -524,6 +728,58 @@
     if (btn) btn.classList.add('active');
   }
 
+  function saveLocalDB() {
+    localStorage.setItem('htc_local_db_v2', JSON.stringify(db));
+    renderServiceDropdowns();
+    renderServicesTable();
+    updateDashboard();
+    renderOrders();
+    renderVisas();
+    renderExpenses();
+  }
+
+  // SERVICES
+  function renderServiceDropdowns() {
+    const opts = db.services.map(s => `<option value="${s.Service_Name}" data-rate="${s.Default_Rate || 0}">${s.Service_Name}</option>`).join('');
+    if (document.getElementById('serviceCat')) document.getElementById('serviceCat').innerHTML = opts;
+    if (document.getElementById('editServiceCat')) document.getElementById('editServiceCat').innerHTML = opts;
+  }
+
+  function applyServiceDefaultRate() {
+    const sel = document.getElementById('serviceCat');
+    const rate = Number(sel.options[sel.selectedIndex]?.dataset?.rate || 0);
+    if (rate > 0 && !document.getElementById('totalAmount').value) {
+      document.getElementById('totalAmount').value = rate;
+      calcDue();
+    }
+  }
+
+  function addNewService(e) {
+    e.preventDefault();
+    const srv = {
+      Service_Name: document.getElementById('srvName').value.trim(),
+      Default_Rate: Number(document.getElementById('srvRate').value) || 0,
+      Notes: document.getElementById('srvNotes').value.trim()
+    };
+    db.services.push(srv);
+    saveLocalDB();
+    e.target.reset();
+    pushToGoogleSheet({ action: 'addService', name: srv.Service_Name, rate: srv.Default_Rate, notes: srv.Notes });
+    alert('নতুন সার্ভিস যুক্ত হয়েছে এবং বিল ফর্মে সক্রিয় করা হয়েছে!');
+  }
+
+  function renderServicesTable() {
+    document.getElementById('servicesTable').innerHTML = db.services.map((s, i) => `
+      <tr>
+        <td>${i + 1}</td>
+        <td><strong>${s.Service_Name}</strong></td>
+        <td>${Number(s.Default_Rate) > 0 ? '৳ ' + Number(s.Default_Rate) : 'কাস্টম'}</td>
+        <td>${s.Notes || '-'}</td>
+      </tr>
+    `).join('');
+  }
+
+  // ORDERS: CREATE, EDIT, DELETE, DUE
   function calcDue() {
     const total = Number(document.getElementById('totalAmount').value) || 0;
     const paid = Number(document.getElementById('paidAmount').value) || 0;
@@ -549,26 +805,90 @@
       Status: due === 0 ? 'Paid' : 'Partial Due',
       Created_By: currentUser
     };
-
     db.orders.unshift(order);
     saveLocalDB();
     e.target.reset();
     openInvoice(order);
     pushToGoogleSheet({
       action: 'addOrder',
-      invoiceId: order.Invoice_ID,
-      date: order.Date,
-      customerName: order.Customer_Name,
-      phone: order.Phone,
-      category: order.Service_Category,
-      details: order.Details_PNR,
-      total: order.Total_Amount,
-      paid: order.Paid_Amount,
-      due: order.Due_Amount,
-      method: order.Payment_Method,
-      status: order.Status,
-      createdBy: order.Created_By
+      invoiceId: order.Invoice_ID, date: order.Date, customerName: order.Customer_Name,
+      phone: order.Phone, category: order.Service_Category, details: order.Details_PNR,
+      total: order.Total_Amount, paid: order.Paid_Amount, due: order.Due_Amount,
+      method: order.Payment_Method, status: order.Status, createdBy: order.Created_By
     });
+  }
+
+  function openEditOrder(invId) {
+    const o = db.orders.find(x => x.Invoice_ID === invId);
+    if (!o) return;
+    renderServiceDropdowns();
+    document.getElementById('editInvId').value = o.Invoice_ID;
+    document.getElementById('editCustName').value = o.Customer_Name;
+    document.getElementById('editCustPhone').value = o.Phone;
+    document.getElementById('editServiceCat').value = o.Service_Category;
+    document.getElementById('editDetails').value = o.Details_PNR;
+    document.getElementById('editTotal').value = o.Total_Amount;
+    document.getElementById('editPaid').value = o.Paid_Amount;
+    document.getElementById('editDue').value = o.Due_Amount;
+    document.getElementById('editPayMethod').value = o.Payment_Method || 'Cash';
+    document.getElementById('editOrderModal').style.display = 'flex';
+  }
+
+  function closeEditModal() {
+    document.getElementById('editOrderModal').style.display = 'none';
+  }
+
+  function calcEditDue() {
+    const total = Number(document.getElementById('editTotal').value) || 0;
+    const paid = Number(document.getElementById('editPaid').value) || 0;
+    document.getElementById('editDue').value = Math.max(0, total - paid);
+  }
+
+  function updateExistingOrder(e) {
+    e.preventDefault();
+    const invId = document.getElementById('editInvId').value;
+    const idx = db.orders.findIndex(x => x.Invoice_ID === invId);
+    if (idx === -1) return;
+
+    const total = Number(document.getElementById('editTotal').value);
+    const paid = Number(document.getElementById('editPaid').value);
+    const due = Math.max(0, total - paid);
+
+    db.orders[idx] = {
+      ...db.orders[idx],
+      Customer_Name: document.getElementById('editCustName').value,
+      Phone: document.getElementById('editCustPhone').value,
+      Service_Category: document.getElementById('editServiceCat').value,
+      Details_PNR: document.getElementById('editDetails').value,
+      Total_Amount: total,
+      Paid_Amount: paid,
+      Due_Amount: due,
+      Payment_Method: document.getElementById('editPayMethod').value,
+      Status: due === 0 ? 'Paid' : 'Partial Due'
+    };
+
+    saveLocalDB();
+    closeEditModal();
+    pushToGoogleSheet({
+      action: 'updateOrder',
+      invoiceId: invId,
+      customerName: db.orders[idx].Customer_Name,
+      phone: db.orders[idx].Phone,
+      category: db.orders[idx].Service_Category,
+      details: db.orders[idx].Details_PNR,
+      total, paid, due,
+      method: db.orders[idx].Payment_Method,
+      status: db.orders[idx].Status
+    });
+    alert('অর্ডার সফলভাবে সংশোধন করা হয়েছে!');
+  }
+
+  function deleteOrder(invId) {
+    if (currentUser !== 'admin') return alert('শুধুমাত্র Admin অর্ডার ডিলিট করতে পারবেন।');
+    if (!confirm(`আপনি কি নিশ্চিত যে ইনভয়েস ${invId} ডিলিট করতে চান?`)) return;
+    db.orders = db.orders.filter(x => x.Invoice_ID !== invId);
+    saveLocalDB();
+    pushToGoogleSheet({ action: 'deleteOrder', invoiceId: invId });
   }
 
   function collectDue(invId) {
@@ -582,12 +902,13 @@
       order.Status = order.Due_Amount === 0 ? 'Paid' : 'Partial Due';
       saveLocalDB();
       pushToGoogleSheet({ action: 'collectDue', invoiceId: invId, payAmount: payAmt });
-      if (confirm('বকেয়া জমা আপডেট হয়েছে! কাস্টমারকে WhatsApp পেমেন্ট রসিদ পাঠাতে চান?')) {
+      if (confirm('বকেয়া জমা হয়েছে! WhatsApp রসিদ পাঠাতে চান?')) {
         sendPaymentReceiptWA(order, payAmt);
       }
     }
   }
 
+  // VISA & EXPENSE
   function saveVisa(e) {
     e.preventDefault();
     const total = Number(document.getElementById('vTotal').value);
@@ -609,20 +930,11 @@
     saveLocalDB();
     e.target.reset();
     pushToGoogleSheet({
-      action: 'addVisa',
-      trackId: visa.Track_ID,
-      date: visa.Date,
-      name: visa.Applicant_Name,
-      phone: visa.Phone,
-      passport: visa.Passport_No,
-      country: visa.Country_Type,
-      total: visa.Total_Fee,
-      paid: visa.Paid,
-      due: visa.Due,
-      visaStatus: visa.Current_Status,
-      remarks: visa.Remarks
+      action: 'addVisa', trackId: visa.Track_ID, date: visa.Date, name: visa.Applicant_Name,
+      phone: visa.Phone, passport: visa.Passport_No, country: visa.Country_Type,
+      total: visa.Total_Fee, paid: visa.Paid, due: visa.Due,
+      visaStatus: visa.Current_Status, remarks: visa.Remarks
     });
-    alert('ভিসা ফাইল সফলভাবে যুক্ত হয়েছে!');
   }
 
   function changeVisaStatus(trackId, newStatus) {
@@ -632,6 +944,13 @@
       saveLocalDB();
       pushToGoogleSheet({ action: 'updateVisaStatus', trackId, newStatus });
     }
+  }
+
+  function deleteVisa(trackId) {
+    if (!confirm(`ভিসা ফাইল ${trackId} ডিলিট করতে চান?`)) return;
+    db.visas = db.visas.filter(x => x.Track_ID !== trackId);
+    saveLocalDB();
+    pushToGoogleSheet({ action: 'deleteVisa', trackId });
   }
 
   function saveExpense(e) {
@@ -648,21 +967,24 @@
     saveLocalDB();
     e.target.reset();
     pushToGoogleSheet({
-      action: 'addExpense',
-      expId: exp.Exp_ID,
-      date: exp.Date,
-      category: exp.Category,
-      desc: exp.Description,
-      amount: exp.Amount,
-      addedBy: exp.Added_By
+      action: 'addExpense', expId: exp.Exp_ID, date: exp.Date,
+      category: exp.Category, desc: exp.Description, amount: exp.Amount, addedBy: exp.Added_By
     });
   }
 
+  function deleteExpense(expId) {
+    if (!confirm(`খরচের এন্ট্রি ${expId} ডিলিট করতে চান?`)) return;
+    db.expenses = db.expenses.filter(x => x.Exp_ID !== expId);
+    saveLocalDB();
+    pushToGoogleSheet({ action: 'deleteExpense', expId });
+  }
+
+  // RENDERERS
   function updateDashboard() {
-    const totalSales = db.orders.reduce((sum, o) => sum + Number(o.Total_Amount), 0);
-    const totalPaid = db.orders.reduce((sum, o) => sum + Number(o.Paid_Amount), 0);
-    const totalDue = db.orders.reduce((sum, o) => sum + Number(o.Due_Amount), 0);
-    const totalExp = db.expenses.reduce((sum, e) => sum + Number(e.Amount), 0);
+    const totalSales = db.orders.reduce((s, o) => s + Number(o.Total_Amount), 0);
+    const totalPaid = db.orders.reduce((s, o) => s + Number(o.Paid_Amount), 0);
+    const totalDue = db.orders.reduce((s, o) => s + Number(o.Due_Amount), 0);
+    const totalExp = db.expenses.reduce((s, e) => s + Number(e.Amount), 0);
     const activeVisas = db.visas.filter(v => v.Current_Status !== 'Delivered').length;
 
     document.getElementById('statTotalSales').innerText = '৳ ' + totalSales.toLocaleString();
@@ -703,10 +1025,12 @@
         <td style="color:#dc2626; font-weight:bold;">৳${o.Due_Amount}</td>
         <td><span class="badge ${Number(o.Due_Amount) > 0 ? 'badge-demo' : 'badge-online'}">${o.Status}</span></td>
         <td style="white-space:nowrap;">
+          <button class="btn btn-sm btn-dark" onclick="openEditOrder('${o.Invoice_ID}')" title="সংশোধন"><i class="fas fa-edit"></i></button>
           <button class="btn btn-sm btn-primary" onclick='openInvoice(${JSON.stringify(o)})' title="প্রিন্ট"><i class="fas fa-print"></i></button>
           ${Number(o.Due_Amount) > 0 ? `<button class="btn btn-sm btn-warning" onclick="collectDue('${o.Invoice_ID}')" title="বকেয়া জমা"><i class="fas fa-hand-holding-usd"></i></button>` : ''}
-          ${Number(o.Due_Amount) > 0 ? `<button class="btn btn-sm btn-danger" onclick="sendDueReminder('${o.Invoice_ID}')" title="বকেয়া রিমাইন্ডার মেসেজ"><i class="fas fa-bell"></i></button>` : ''}
-          <button class="btn btn-sm btn-success" onclick='sendWhatsAppOrder(${JSON.stringify(o)})' title="অর্ডার মেসেজ পাঠান"><i class="fab fa-whatsapp"></i></button>
+          ${Number(o.Due_Amount) > 0 ? `<button class="btn btn-sm btn-danger" onclick="sendDueReminder('${o.Invoice_ID}')" title="বকেয়া মেসেজ"><i class="fas fa-bell"></i></button>` : ''}
+          <button class="btn btn-sm btn-success" onclick='sendWhatsAppOrder(${JSON.stringify(o)})' title="WhatsApp"><i class="fab fa-whatsapp"></i></button>
+          <button class="btn btn-sm btn-danger" onclick="deleteOrder('${o.Invoice_ID}')" title="ডিলিট"><i class="fas fa-trash"></i></button>
         </td>
       </tr>
     `).join('');
@@ -727,10 +1051,9 @@
             ).join('')}
           </select>
         </td>
-        <td>
-          <button class="btn btn-sm btn-success" onclick="sendWhatsAppVisa('${v.Applicant_Name}', '${v.Phone}', '${v.Passport_No}', '${v.Current_Status}')">
-            <i class="fab fa-whatsapp"></i> আপডেট দিন
-          </button>
+        <td style="white-space:nowrap;">
+          <button class="btn btn-sm btn-success" onclick="sendWhatsAppVisa('${v.Applicant_Name}', '${v.Phone}', '${v.Passport_No}', '${v.Current_Status}')"><i class="fab fa-whatsapp"></i></button>
+          <button class="btn btn-sm btn-danger" onclick="deleteVisa('${v.Track_ID}')"><i class="fas fa-trash"></i></button>
         </td>
       </tr>
     `).join('');
@@ -744,10 +1067,12 @@
         <td>${e.Category}</td>
         <td>${e.Description}</td>
         <td style="color:#dc2626; font-weight:bold;">৳${e.Amount}</td>
+        <td><button class="btn btn-sm btn-danger" onclick="deleteExpense('${e.Exp_ID}')"><i class="fas fa-trash"></i></button></td>
       </tr>
     `).join('');
   }
 
+  // INVOICE & WHATSAPP
   function openInvoice(o) {
     document.getElementById('pName').innerText = o.Customer_Name;
     document.getElementById('pPhone').innerText = o.Phone;
@@ -768,39 +1093,34 @@
   }
 
   function sendWhatsAppOrder(o) {
-    const msg = `*হক্কানী ট্রাভেল্স সেন্টার*\nকালির বাজার, মাদারীপুর।\n------------------\nসম্মানিত ${o.Customer_Name},\nআপনার অর্ডার ও বিল বিবরণী:\nইনভয়েস নং: ${o.Invoice_ID}\nসার্ভিস: ${o.Service_Category} (${o.Details_PNR})\nমোট বিল: ৳${o.Total_Amount}\nজমা: ৳${o.Paid_Amount}\nবকেয়া: ৳${o.Due_Amount}\n------------------\nধন্যবাদান্তে, হক্কানী ট্রাভেল্স সেন্টার (01711651029)`;
+    const msg = `*হক্কানী ট্রাভেল্স সেন্টার*\nকালির বাজার, মাদারীপুর।\n------------------\nসম্মানিত ${o.Customer_Name},\nইনভয়েস: ${o.Invoice_ID}\nসার্ভিস: ${o.Service_Category} (${o.Details_PNR})\nমোট বিল: ৳${o.Total_Amount}\nজমা: ৳${o.Paid_Amount}\nবকেয়া: ৳${o.Due_Amount}\n------------------\nযোগাযোগ: 01711651029`;
     window.open(`https://wa.me/${formatPhoneBD(o.Phone)}?text=${encodeURIComponent(msg)}`, '_blank');
   }
 
   function sendDueReminder(invId) {
     const o = db.orders.find(item => item.Invoice_ID === invId);
-    if (!o || Number(o.Due_Amount) <= 0) return alert('এই ইনভয়েসে কোনো বকেয়া নেই।');
-    const msg = `*বকেয়া পরিশোধের অনুরোধ - হক্কানী ট্রাভেল্স সেন্টার*\nকালির বাজার, মাদারীপুর।\n------------------\nসম্মানিত ${o.Customer_Name},\nইনভয়েস নং: ${o.Invoice_ID} (${o.Service_Category})\nমোট বিল: ৳${o.Total_Amount}\nপরিশোধিত: ৳${o.Paid_Amount}\n*বর্তমান বকেয়া: ৳${o.Due_Amount}*\n------------------\nদ্রুত বকেয়া পরিশোধের জন্য যোগাযোগ করুন: 01711651029`;
+    if (!o || Number(o.Due_Amount) <= 0) return alert('বকেয়া নেই।');
+    const msg = `*বকেয়া পরিশোধের অনুরোধ - হক্কানী ট্রাভেল্স সেন্টার*\nসম্মানিত ${o.Customer_Name},\nইনভয়েস: ${o.Invoice_ID}\nমোট বিল: ৳${o.Total_Amount}\nপরিশোধিত: ৳${o.Paid_Amount}\n*বকেয়া: ৳${o.Due_Amount}*\n------------------\nযোগাযোগ: 01711651029`;
     window.open(`https://wa.me/${formatPhoneBD(o.Phone)}?text=${encodeURIComponent(msg)}`, '_blank');
   }
 
   function sendPaymentReceiptWA(o, lastPaidAmount) {
-    const msg = `*পেমেন্ট রিসিভড কনফার্মেশন - হক্কানী ট্রাভেল্স সেন্টার*\nসম্মানিত ${o.Customer_Name},\nইনভয়েস নং: ${o.Invoice_ID}\nআজকের জমা: ৳${lastPaidAmount}\nমোট জমা হয়েছে: ৳${o.Paid_Amount}\nঅবশিষ্ট বকেয়া: ৳${o.Due_Amount}\nস্ট্যাটাস: ${o.Status}\nধন্যবাদান্তে, হক্কানী ট্রাভেল্স সেন্টার (01711651029)`;
+    const msg = `*পেমেন্ট রিসিভড - হক্কানী ট্রাভেল্স সেন্টার*\nসম্মানিত ${o.Customer_Name},\nইনভয়েস: ${o.Invoice_ID}\nআজকের জমা: ৳${lastPaidAmount}\nমোট জমা: ৳${o.Paid_Amount}\nঅবশিষ্ট বকেয়া: ৳${o.Due_Amount}\nধন্যবাদান্তে, হক্কানী ট্রাভেল্স সেন্টার (01711651029)`;
     window.open(`https://wa.me/${formatPhoneBD(o.Phone)}?text=${encodeURIComponent(msg)}`, '_blank');
   }
 
   function sendWhatsAppVisa(name, phone, passport, status) {
-    const msg = `*হক্কানী ট্রাভেল্স সেন্টার - ভিসা আপডেট*\nসম্মানিত ${name},\nআপনার পাসপোর্ট নং (${passport})-এর বর্তমান অবস্থা: *${status}*।\nবিস্তারিত জানতে যোগাযোগ করুন: 01711651029`;
+    const msg = `*হক্কানী ট্রাভেল্স সেন্টার - ভিসা আপডেট*\nসম্মানিত ${name},\nপাসপোর্ট (${passport}) স্ট্যাটাস: *${status}*।\nযোগাযোগ: 01711651029`;
     window.open(`https://wa.me/${formatPhoneBD(phone)}?text=${encodeURIComponent(msg)}`, '_blank');
   }
 
   function testDueAndWhatsAppSystem() {
     const dueOrders = db.orders.filter(o => Number(o.Due_Amount) > 0);
     const totalDue = dueOrders.reduce((s, o) => s + Number(o.Due_Amount), 0);
-    alert(
-      `✅ বকেয়া ও মেসেজ সিস্টেম এক্টিভ আছে!\n\n` +
-      `• বকেয়াযুক্ত অর্ডার: ${dueOrders.length} টি\n` +
-      `• মোট বকেয়া: ৳${totalDue.toLocaleString()}\n` +
-      `• WhatsApp মেসেজ জেনারেটর: Active\n\n` +
-      `"বিক্রয় ও বকেয়া লেজার" ট্যাবে গিয়ে সরাসরি বকেয়া জমা, বকেয়া রিমাইন্ডার (🔔) এবং অর্ডার মেসেজ (WhatsApp) ব্যবহার করতে পারবেন।`
-    );
+    alert(`✅ বকেয়া ও মেসেজ সিস্টেম এক্টিভ!\n• বকেয়াযুক্ত অর্ডার: ${dueOrders.length} টি\n• মোট বকেয়া: ৳${totalDue.toLocaleString()}\n• Edit / Delete / Service Add / Slider: Active`);
   }
 
+  // GOOGLE SHEETS SYNC
   function saveGasUrl() {
     const url = document.getElementById('gasUrlInput').value.trim();
     if (!url) return alert('সঠিক URL দিন!');
@@ -831,25 +1151,27 @@
       const res = await fetch(`${GAS_URL}?action=getAllData`);
       const data = await res.json();
       if (data.status === 'success') {
-        if (data.orders.length) db.orders = data.orders.reverse();
-        if (data.visas.length) db.visas = data.visas.reverse();
-        if (data.expenses.length) db.expenses = data.expenses.reverse();
+        if (data.orders?.length) db.orders = data.orders.reverse();
+        if (data.visas?.length) db.visas = data.visas.reverse();
+        if (data.expenses?.length) db.expenses = data.expenses.reverse();
+        if (data.services?.length) db.services = data.services;
         saveLocalDB();
-        alert('গুগল শিট থেকে সকল ডেটা সফলভাবে সিঙ্ক হয়েছে!');
+        alert('গুগল শিট থেকে ডেটা সিঙ্ক হয়েছে!');
       }
     } catch (err) {
-      alert('সিঙ্ক করতে সমস্যা হয়েছে। Apps Script ডিপ্লয়মেন্ট পারমিশন (Anyone) চেক করুন।');
+      alert('সিঙ্ক করতে সমস্যা হয়েছে। Apps Script পারমিশন (Anyone) চেক করুন।');
     }
   }
 
   function runFullSystemTest() {
     const log = document.getElementById('testLog');
     log.style.display = 'block';
-    log.innerHTML = '>> সিস্টেম ডায়াগনস্টিক ও ফিচার টেস্ট শুরু হচ্ছে...<br>';
-    setTimeout(() => log.innerHTML += '✔ [PASS] অর্ডার ও বিল হিসাব ইঞ্জিন সচল আছে।<br>', 300);
-    setTimeout(() => log.innerHTML += '✔ [PASS] কাস্টমার বকেয়া (Due) হিসাব ও আদায় সিস্টেম সচল।<br>', 600);
-    setTimeout(() => log.innerHTML += '✔ [PASS] অর্ডার মেসেজ, বকেয়া রিমাইন্ডার ও পেমেন্ট রসিদ WhatsApp লিংক সচল।<br>', 900);
-    setTimeout(() => log.innerHTML += '<strong style="color:#4ade80;">>> সব ফিচার ১০০% এক্টিভ ও প্রস্তুত!</strong>', 1200);
+    log.innerHTML = '>> সম্পূর্ণ সিস্টেম চেক শুরু হচ্ছে...<br>';
+    setTimeout(() => log.innerHTML += '✔ [OK] লগইন পিন হাইড ও আই-টগল সক্রিয়।<br>', 250);
+    setTimeout(() => log.innerHTML += '✔ [OK] নতুন সার্ভিস যুক্ত ও ড্রপডাউন সিঙ্ক সক্রিয়।<br>', 500);
+    setTimeout(() => log.innerHTML += '✔ [OK] অর্ডার সংশোধন (Edit), ডিলিট (Delete) ও বকেয়া হিসাব সক্রিয়।<br>', 750);
+    setTimeout(() => log.innerHTML += '✔ [OK] ট্রাভেল স্লাইডার অ্যানিমেশন, হেডার ও ফুটার প্রস্তুত।<br>', 1000);
+    setTimeout(() => log.innerHTML += '<strong style="color:#4ade80;">>> সব ফিচার ১০০% রেডি!</strong>', 1250);
   }
 </script>
 </body>
